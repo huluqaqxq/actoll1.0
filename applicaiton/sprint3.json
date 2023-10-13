@@ -1,0 +1,17 @@
+{
+  "name": "sprint3",
+  "sql": [
+    {
+      "name": "测试3",
+      "mysqlField": [
+        "id"
+      ],
+      "sqlServerField": [
+        "ID"
+      ],
+      "mysqlCenter": "select * from a_glance",
+      "mysqlInterface": "select * from a_glance",
+      "sqlServerSql": "SELECT * FROM [actool].[dbo].[test]"
+    }
+  ]
+}
