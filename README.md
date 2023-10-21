@@ -1,6 +1,6 @@
 # AcTool
 <h1/>
-To facilitate automated comparison of data values ??from different data
+To facilitate automated comparison of data values from different data
 
 ## env
 python3.10.4
@@ -9,8 +9,9 @@ python3.10.4
 主要依赖第三方库 \
 pandas、numpy == 数据处理 \
 pymysql == 连接 mysql \
-pyodbc  == 连接 sqlserver
-
+pyodbc  == 连接 sqlserver \
+cx_Freeze == 打包工具 \
+tkinter == 窗口化 \
 启动命令
 ```shell
 python actapplication.py
