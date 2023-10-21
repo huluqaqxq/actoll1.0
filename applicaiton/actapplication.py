@@ -19,6 +19,7 @@ def compare_sql_list(log, mysql_con, sqlserver_con, sql_list):
     execute_result_list = []
     remark_list = []
     for item in sql_list:
+        start_time = datetime.datetime.now()
         try:
             mysqlResult = select(log, mysql_con, item['mysqlCenter'])
             sqlServerResult = read_sql(log, sqlserver_con, item['sqlServerSql'])
@@ -53,6 +54,7 @@ def compare_sql_list(log, mysql_con, sqlserver_con, sql_list):
         except Exception as e:
             log.error('%s compare Error %s', item['name'], e)
 
+        log.info("%s elapsed time: %ss", item['name'], (datetime.datetime.now() - start_time).total_seconds())
     data = {
         'job名称': job_list,
         '执行时间': execute_time_list,
@@ -76,6 +78,7 @@ def main_init(log):
     compare_json_file = db_config['jsonFile']
 
     for file in compare_json_file:
+        start_time = datetime.datetime.now()
         try:
             compare_json = read_josn(file)
             sheet_name = compare_json['name']
@@ -86,6 +89,7 @@ def main_init(log):
             write_xlsx_sheets(log, data, file_name, sheet_name)
         except Exception as e:
             log.error('Error %s jsonFile %s', e, file)
+        log.info("%s elapsed time: %ss", file, (datetime.datetime.now() - start_time).total_seconds())
 
 
 window = tk_init()
