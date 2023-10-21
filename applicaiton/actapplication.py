@@ -2,14 +2,15 @@ import datetime
 from datetime import date
 import pandas as pd
 
-from tool.excel_utils import compare, write_xlsx_sheets
+from tool.excel_utils import compare, write_xlsx_sheets, export_sheet_for_data
 from tool.json_utils import read_josn
 from tool.mysql import mysql_init, select
 from tool.sqlserver_pyodbc import sqlserver_init, read_sql
 from tool.logging_utils import log_init
+from tool.tk_utils import tk_init, get_text
 
 
-def compare_sql_list(log, mysql_con, sqlserver_con, sqlList):
+def compare_sql_list(log, mysql_con, sqlserver_con, sql_list):
     job_list = []
     execute_time_list = []
     source_list = []
@@ -17,14 +18,14 @@ def compare_sql_list(log, mysql_con, sqlserver_con, sqlList):
     endList = []
     execute_result_list = []
     remark_list = []
-    for item in sqlList:
+    for item in sql_list:
         try:
             mysqlResult = select(log, mysql_con, item['mysqlCenter'])
             sqlServerResult = read_sql(log, sqlserver_con, item['sqlServerSql'])
             job_list.append(item['name'])
             execute_time_list.append(datetime.datetime.now())
             source_list.append(item['sqlServerSql'])
-            interfaceList.append(item['mysqlInterface'])
+            interfaceList.append(item['mysqlCenter'])
             endList.append(item['mysqlCenter'])
 
             compareFlag = len(mysqlResult) == len(sqlServerResult)
@@ -33,16 +34,21 @@ def compare_sql_list(log, mysql_con, sqlserver_con, sqlList):
                 remark_list.append('同步条数：SBI ' + str(len(sqlServerResult)) + ' & 中台 ' + str(len(mysqlResult)) + '条')
             else:
                 remark_list.append('同步条数：' + str(len(sqlServerResult)) + '条')
-            mysqlResultKey = pd.DataFrame()
-            sqlServerResultKey = pd.DataFrame()
-            for index, column in enumerate(item['mysqlField']):
-                mysqlResultKey[item['mysqlField'][index]] = mysqlResult[item['mysqlField'][index]]
-                sqlServerResultKey[item['mysqlField'][index]] = sqlServerResult[item['sqlServerField'][index]]
-            # 空值填充
-            mysqlResult.fillna(1)
-            sqlServerResult.fillna(1)
-            # 比对具体数据
-            compare(log, mysqlResultKey, sqlServerResultKey, item['mysqlField'], item['name'])
+
+            if len(mysqlResult) == 0 or len(sqlServerResult) == 0:
+                export_sheet_for_data(log, mysqlResult, item['name'] + 'mysql')
+                export_sheet_for_data(log, sqlServerResult, item['name'] + 'sqlserver')
+            else:
+                mysqlResultKey = pd.DataFrame()
+                sqlServerResultKey = pd.DataFrame()
+                for index, column in enumerate(item['mysqlField']):
+                    mysqlResultKey[item['mysqlField'][index]] = mysqlResult[item['mysqlField'][index]]
+                    sqlServerResultKey[item['mysqlField'][index]] = sqlServerResult[item['sqlServerField'][index]]
+                # 空值填充
+                mysqlResult.fillna(1)
+                sqlServerResult.fillna(1)
+                # 比对具体数据
+                compare(log, mysqlResultKey, sqlServerResultKey, item['mysqlField'], item['name'])
 
         except Exception as e:
             log.error('%s compare Error %s', item['name'], e)
@@ -82,8 +88,17 @@ def main_init(log):
             log.error('Error %s jsonFile %s', e, file)
 
 
-log = log_init()
+window = tk_init()
+text = get_text(window)
+log = log_init(window, text)
 try:
+    log.info('Data comparison start !')
+    start_time = datetime.datetime.now()
     main_init(log)
+    end_time = datetime.datetime.now()
+
+    log.info("Data comparison success !!! elapsed time: %ss", (end_time - start_time).total_seconds())
+
 except Exception as e:
     log.error(e)
+window.mainloop()

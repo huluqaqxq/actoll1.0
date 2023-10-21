@@ -40,6 +40,13 @@ def export_sheet(log, data, file_name):
     log.info('fileName: %s to_excel success', file_name)
 
 
+def export_sheet_for_data(log, data, name):
+    if len(data) > 0:
+        file_name = str(date.today()) + '/' + str(date.today()) + name + "差异数据.xlsx"
+        mkdir(log, str(date.today()))
+        export_sheet(log, data, file_name)
+
+
 def write_xlsx_sheets(log, df, file_name, sheet_name):
     """ Use the openpyxl module to write a new sheet to an existing excel file
     :param log:
@@ -52,7 +59,9 @@ def write_xlsx_sheets(log, df, file_name, sheet_name):
     with pd.ExcelWriter(file_name, mode='a', engine='openpyxl') as writer:
         workbook = writer.book
         # 删除指定sheet
-        workbook.remove(workbook[sheet_name])
+        sheet_names = workbook.sheetnames
+        if sheet_name in sheet_names:
+            workbook.remove(workbook[sheet_name])
         df.to_excel(writer, sheet_name=sheet_name, index=False)
     writer.close()
     log.info("write_xlsx_sheets: %s %s success", file_name, sheet_name)
@@ -70,11 +79,11 @@ def compare(log, df1, df2, key, name):
 
     """
 
-    df1['SBI'] = '1'
-    df2['interface'] = '2'
+    df2['SBI'] = '1'
+    df1['interface'] = '2'
     log.info('-------------------------')
-    log.info('df1 %s', df1)
-    log.info('df2 %s', df2)
+    log.info('df1 \n %s', df1)
+    log.info('df2 \n %s', df2)
     merge_frame = pd.merge(df1, df2, on=key, how='outer')
     log.info('------------mergeFrame-------------')
     log.info(merge_frame)
