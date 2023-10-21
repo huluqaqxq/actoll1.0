@@ -6,21 +6,21 @@ To facilitate automated comparison of data values ??from different data
 python3.10.4
 
 ## Getting Started
-Ö÷ÒªÒÀÀµµÚÈı·½¿â \
-pandas¡¢numpy == Êı¾İ´¦Àí \
-pymysql == Á¬½Ó mysql \
-pyodbc  == Á¬½Ó sqlserver
+ä¸»è¦ä¾èµ–ç¬¬ä¸‰æ–¹åº“ \
+pandasã€numpy == æ•°æ®å¤„ç† \
+pymysql == è¿æ¥ mysql \
+pyodbc  == è¿æ¥ sqlserver
 
-Æô¶¯ÃüÁî
+å¯åŠ¨å‘½ä»¤
 ```shell
 python actapplication.py
 ```
-È±ÉÙ°ü Ê¹ÓÃ install ÃüÁîÏÂÔØ¼´¿É 
+ç¼ºå°‘åŒ… ä½¿ç”¨ install å‘½ä»¤ä¸‹è½½å³å¯ 
 ```shell
 pip install package
 ```
 
-´ò°üÃüÁî
+æ‰“åŒ…å‘½ä»¤
 ```bash
 python setup.py build
 ```
