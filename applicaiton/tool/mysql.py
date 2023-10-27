@@ -10,6 +10,6 @@ def mysql_init(host, user, password, database):
 def select(log, cursor, sql):
     cursor.execute(sql)
     result = cursor.fetchall()
-    if not result:
+    if len(result) == 0:
         return []
     return pd.DataFrame(result, columns=[column[0] for column in cursor.description])
