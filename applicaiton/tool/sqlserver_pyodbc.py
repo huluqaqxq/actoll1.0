@@ -12,7 +12,7 @@ def sqlserver_init(log, server):
 def read_sql(log, cursor, sql):
     cursor.execute(sql)
     row = np.array(cursor.fetchall())
-    if not row:
+    if len(row) == 0:
         return []
     result = pd.DataFrame(row, columns=[column[0] for column in cursor.description])
     return result
